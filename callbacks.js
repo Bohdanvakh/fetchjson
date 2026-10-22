@@ -40,3 +40,52 @@ function getData(id, callback) {
         callback('User no found', null, saveToNotFound(id));
     }
 }
+
+// one more example
+
+const users = [];
+
+function setUser(user, callback) {
+    users.push(user);
+
+    callback(users);
+}
+
+setUser({firstName: 'Bohdan', lastName: 'Vakh'}, (users) => {
+    console.log(users);
+});
+
+setUser({firstName: 'Bohdan2', lastName: 'Vakh2'}, (users) => {
+    console.log(users);
+});
+
+// work with file
+
+import fs from 'fs';
+
+function saveUser(user, callback) {
+    const filePath = 'users.json';
+
+    fs.readFile(filePath, 'utf8', (error, data) => {
+        let items = [];
+        if(!error) {
+            items = JSON.parse(data);
+        } else {
+            return callback(error);
+        }
+
+        items.push(user);
+
+        fs.writeFile(filePath, JSON.stringify(items, null, 2), 'utf8', (error) => {
+            if (error) return callback(error);
+
+            callback(null, items, user)
+        });
+    });
+}
+
+saveUser({ firstName: "Bohdan", lastName: "Vakh" }, (error, items, user) => {
+    if(error) return console.log(error);
+
+    console.log('User:', user, 'was saved');
+});
