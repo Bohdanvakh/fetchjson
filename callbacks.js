@@ -134,3 +134,39 @@ task1((err, text) => {
 task1((err, text) => {
     console.log(err);                                      // returns error from task1 (null);
 });
+
+
+// promises
+
+function funcWithPromise1() {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve('Task 1 is completed.');
+        }, 1000);
+    });
+}
+
+function funcWithPromise2(result1) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve('Task 2 is completed with ' + result1);
+        }, 1000);
+    });
+}
+
+function funcWithPromise3(result2) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve('Task 3 is completed with ' + result2);
+        }, 1000);
+    });
+}
+
+funcWithPromise1()
+    .then(result1 => funcWithPromise2(result1))
+    .then(result2 => funcWithPromise3(result2))
+    .then(result3 => {
+        console.log(result3);
+        console.log('All tasks are completed');
+    })
+    .catch(err => console.log(err));
