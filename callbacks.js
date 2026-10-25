@@ -91,3 +91,46 @@ saveUser(user, (error, items, user) => {
 
     console.log('User:', user.firstName, user.lastName, 'was saved');
 });
+
+// Callback hell
+
+function task1(done) {
+    setTimeout(() => {
+        done(null, 'Task 1 is completed.');
+    }, 1000);                                              // returns text after 1 second
+};
+
+function task2(result1, done) {
+    setTimeout(() => {
+        done(null, 'Task 2 is completed with ' + result1);
+    }, 1000);
+};
+
+function task3(result2, done) {
+    setTimeout(() => {
+        done(null, 'Task 3 is completed with ' + result2);
+    }, 1000);
+};
+
+task1((err, dataForTask2) => {
+    if(err) return console.log(err);
+
+    task2(dataForTask2, (err, dataForTask3) => {
+        if(err) return console.log(err);
+
+        task3(dataForTask3, (err, data) => {
+            if(err) return console.log(err);
+                
+            console.log(data);
+            console.log('All tasks are completed');
+        });
+    });
+});
+
+task1((err, text) => {
+    console.log(text);                                     // returns text after 1 second
+});
+
+task1((err, text) => {
+    console.log(err);                                      // returns error from task1 (null);
+});
