@@ -84,8 +84,10 @@ function saveUser(user, callback) {
     });
 }
 
-saveUser({ firstName: "Bohdan", lastName: "Vakh" }, (error, items, user) => {
+const user = { firstName: "Bohdan", lastName: "Vakh" };
+
+saveUser(user, (error, items, user) => {
     if(error) return console.log(error);
 
-    console.log('User:', user, 'was saved');
+    console.log('User:', user.firstName, user.lastName, 'was saved');
 });
