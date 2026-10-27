@@ -68,3 +68,52 @@ setUser({id: 12, name: 'Bohdan', email: 'lorem@gmail.com'}, (err, user, userSet)
         console.log('User ', user?.name, ' was added to the database in ', userSet);
     }
 });
+
+// work with file in TS
+
+import fs from 'fs';
+
+interface NextUser {
+    firstName: string,
+    lastName: string
+}
+
+type callbackBody = (
+    error: Error | null,
+    items: NextUser[] | null,
+    user: NextUser | null
+) => void;
+
+function saveUser(user: NextUser, callback: callbackBody): void {
+    const filePath: string = 'users.json';
+
+    fs.readFile(filePath, 'utf8', (err, data) => {
+        if(err) {
+            return callback(err, null, null);
+        }
+
+        let items: NextUser[] = [];
+
+        try {
+            items = JSON.parse(data);
+        } catch (e) {
+            return callback(e as Error, null, null);
+        }
+
+        items.push(user);
+
+        fs.writeFile(filePath, JSON.stringify(items), 'utf8', (error: Error) => {
+            if(error) return callback(error, null, null);
+
+            callback(null, items, user);
+        });
+    });
+}
+
+const user: NextUser = { firstName: "Bohdan10", lastName: "Vakh10" };
+
+saveUser(user, (err, items, user) => {
+    if(err) return console.log(err);
+
+    console.log('User:', user?.firstName, user?.lastName, 'was saved');
+});
