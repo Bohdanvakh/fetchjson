@@ -42,3 +42,29 @@ async function getUserId(): Promise<number> {
 }
 
 console.log(getUserId());
+
+// TS callbacks practise
+
+type setUserCallback = (
+    err: string | null,
+    user: User | null,
+    userSet: User[] | null
+) => void;
+
+function setUser(user: User, callback: setUserCallback): void {
+    database.users.push(user);
+
+    if(database.users.includes(user)) {
+        callback(null, user, database.users);
+    } else {
+        callback('User was not added to the database', null, null);
+    }
+}
+
+setUser({id: 12, name: 'Bohdan', email: 'lorem@gmail.com'}, (err, user, userSet) => {
+    if(err) {
+        console.log(err);
+    } else {
+        console.log('User ', user?.name, ' was added to the database in ', userSet);
+    }
+});
