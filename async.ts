@@ -110,10 +110,63 @@ function saveUser(user: NextUser, callback: callbackBody): void {
     });
 }
 
-const user: NextUser = { firstName: "Bohdan10", lastName: "Vakh10" };
+const user: NextUser = { firstName: "Bohdan1", lastName: "Vakh1" };
 
 saveUser(user, (err, items, user) => {
     if(err) return console.log(err);
 
     console.log('User:', user?.firstName, user?.lastName, 'was saved');
 });
+
+// practise promises with TS
+
+function readUsers(filePath: string): Promise<NextUser[]> {
+    return new Promise((resolve, reject) => {
+        fs.readFile(filePath, 'utf8', (err, data) => {
+            if(err) {
+                return reject(err);
+            }
+
+            resolve(JSON.parse(data));
+        });
+    });
+}
+
+function writeUsers(filePath: string, user: NextUser): Promise<NextUser[]> {
+    return new Promise((resolve, reject) => {
+        fs.readFile(filePath, 'utf8', (err, data) => {
+            if (err) {
+                return reject(err);
+            }
+
+            let items: NextUser[] = [];
+
+            try {
+                items = data.trim() === '' ? [] : JSON.parse(data);
+            } catch (e) {
+                return reject(e);
+            }
+
+            items.push(user);
+
+            fs.writeFile(filePath, JSON.stringify(items), 'utf8', (error) => {
+                if (error) return reject(error);
+
+                resolve(items);
+            });
+        });
+    });
+}
+
+const user11: NextUser = { firstName: "Bohdan11", lastName: "Vakh11" };
+const user12: NextUser = { firstName: "Bohdan12", lastName: "Vakh12" };
+
+const filePath: string = 'users.json';
+
+// writeUsers(filePath, user11)
+//     .then(data => console.log(data))
+//     .catch(err => console.log(err));
+
+// writeUsers(filePath, user12)
+//     .then(data => console.log(data))
+//     .catch(err => console.log(err));
