@@ -132,36 +132,48 @@ function readUsers(filePath: string): Promise<NextUser[]> {
     });
 }
 
-function writeUsers(filePath: string, user: NextUser): Promise<NextUser[]> {
+function readFile(filePath: string): Promise<NextUser[]> {
     return new Promise((resolve, reject) => {
         fs.readFile(filePath, 'utf8', (err, data) => {
             if (err) {
+                if (err.code === 'ENOENT') return resolve([]);
                 return reject(err);
             }
 
-            let items: NextUser[] = [];
-
             try {
-                items = data.trim() === '' ? [] : JSON.parse(data);
+                resolve(data.trim() === '' ? [] : JSON.parse(data));
             } catch (e) {
                 return reject(e);
             }
-
-            items.push(user);
-
-            fs.writeFile(filePath, JSON.stringify(items), 'utf8', (error) => {
-                if (error) return reject(error);
-
-                resolve(items);
-            });
         });
     });
 }
 
+function saveUsers(filePath: string, items: NextUser[], user: NextUser): Promise<NextUser[]> {
+    return new Promise((resolve, reject) => {
+        items.push(user);
+
+        fs.writeFile(filePath, JSON.stringify(items), 'utf8', (err, data) => {
+            if (err) return reject(err);
+
+            resolve(items);
+        });
+    });
+}
+
+function writeUsers(filePath: string, user: NextUser): Promise<NextUser[]> {
+    return readFile(filePath).then((items) => saveUsers(filePath, items, user))
+                             .then((items) => console.log(items))
+                             .catch(err => console.log(err));
+}
+
 const user11: NextUser = { firstName: "Bohdan11", lastName: "Vakh11" };
 const user12: NextUser = { firstName: "Bohdan12", lastName: "Vakh12" };
+const user13: NextUser = { firstName: "Bohdan13", lastName: "Vakh13" };
 
 const filePath: string = 'users.json';
+
+writeUsers(filePath, user13);
 
 // writeUsers(filePath, user11)
 //     .then(data => console.log(data))
